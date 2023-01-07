@@ -1,1 +1,1 @@
-# PKOS
+# CloudNet@ Team - Production Kubernetes Online Study 
