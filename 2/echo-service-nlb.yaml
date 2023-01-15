@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-echo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deploy-websrv
+  template:
+    metadata:
+      labels:
+        app: deploy-websrv
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: akos-websrv
+        image: k8s.gcr.io/echoserver:1.5
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nlb-ip-type
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "8080"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  type: LoadBalancer
+  loadBalancerClass: service.k8s.aws/nlb
+  selector:
+    app: deploy-websrv
