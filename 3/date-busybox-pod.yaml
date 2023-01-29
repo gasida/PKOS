@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  terminationGracePeriodSeconds: 3
+  containers:
+  - name: busybox
+    image: busybox
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "while true; do date >> /home/pod-out.txt; cd /home; sync; sync; sleep 10; done"
