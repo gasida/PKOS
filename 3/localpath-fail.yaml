@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: localpath-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: "local-path"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: date-pod
+  labels:
+    app: date
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: date
+  template:
+    metadata:
+      labels:
+        app: date
+    spec:
+      terminationGracePeriodSeconds: 3
+      containers:
+      - name: app
+        image: centos
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo \$(date -u) >> /data/out.txt; sleep 5; done"]
+        volumeMounts:
+        - name: pod-persistent-volume
+          mountPath: /data
+      volumes: 
+      - name: pod-persistent-volume
+        persistentVolumeClaim:
+          claimName: localpath-claim
