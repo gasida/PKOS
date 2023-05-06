@@ -27,7 +27,12 @@ spec:
   selector:
     app: iperf3-server
   ports:
-    - protocol: TCP
+    - name: tcp-service
+      protocol: TCP
+      port: 5201
+      targetPort: 5201
+    - name: udp-service
+      protocol: UDP
       port: 5201
       targetPort: 5201
   type: ClusterIP
